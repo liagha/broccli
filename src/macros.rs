@@ -116,7 +116,7 @@ macro_rules! xeprint {
 
         use broccli::colors::ColoredText;
 
-        eprint!("{}{}", "error: ".colorize(axo_core::colors::Color::BrightRed), text);
+        eprint!("{}{}", "error: ".colorize($crate::colors::Color::BrightRed), text);
 
         #[cfg(target_arch = "wasm32")]
         $crate::macros::error(&text);
@@ -130,7 +130,7 @@ macro_rules! xeprintln {
 
         use broccli::colors::ColoredText;
 
-        eprintln!("{}{}", "error: ".colorize(axo_core::colors::Color::BrightRed), text);
+        eprintln!("{}{}", "error: ".colorize($crate::colors::Color::BrightRed), text);
 
         #[cfg(target_arch = "wasm32")]
         $crate::macros::error(&text);
