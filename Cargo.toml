@@ -1,5 +1,5 @@
 [package]
-name = "clione"
+name = "broccli"
 version = "0.0.0"
 edition = "2021"
 authors = ["Ali Aghaahmadi <itsaliaghaahmadi@gmail.com>"]
@@ -8,5 +8,12 @@ license = "MIT OR Apache-2.0"
 keywords = ["cli", "tui", "rust"]
 categories = ["development-tools", "command-line-interface"]
 
+[features]
+default = ["xprint"]
+wasm = ["dep:wasm-bindgen"]
+xprint = []
+
+
 [dependencies]
 libc = "0.2.169"
+wasm-bindgen = { version = "0.2.100", optional = true }
