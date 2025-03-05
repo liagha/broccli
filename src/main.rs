@@ -3,7 +3,6 @@ use broccli::errors::Error;
 use broccli::interface::Interface;
 use broccli::terminal::get_terminal_size;
 use broccli::widgets::{BoxConfig, LineStyle};
-use broccli::xprintln;
 
 fn main() -> Result<(), Error> {
     let mut interface = Interface::new();

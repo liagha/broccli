@@ -74,7 +74,7 @@ macro_rules! xformat_args {
     (@colorize $text:expr, $color:expr) => {{
         #[cfg(not(target_arch = "wasm32"))]
         {
-            use crate::colors::ColoredText;
+            use broccli::colors::ColoredText;
 
             format!("{}", $text).colorize($color)
         }
@@ -114,7 +114,7 @@ macro_rules! xeprint {
     ($($args:tt)*) => {{
         let text = $crate::xformat_args!($($args)*);
 
-        use axo_core::colors::ColoredText;
+        use broccli::colors::ColoredText;
 
         eprint!("{}{}", "error: ".colorize(axo_core::colors::Color::BrightRed), text);
 
@@ -128,7 +128,7 @@ macro_rules! xeprintln {
     ($($args:tt)*) => {{
         let text = $crate::xformat_args!($($args)*);
 
-        use axo_core::colors::ColoredText;
+        use broccli::colors::ColoredText;
 
         eprintln!("{}{}", "error: ".colorize(axo_core::colors::Color::BrightRed), text);
 
@@ -142,7 +142,7 @@ macro_rules! xdprintln {
     ($($args:tt)*) => {{
         let text = $crate::xformat_args!($($args)*);
 
-        use axo_core::colors::ColoredText;
+        use broccli::colors::ColoredText;
 
         println!("[{}:{}:{}] {}", file!(), line!(), column!(), text);
 
