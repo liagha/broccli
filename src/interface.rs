@@ -1,7 +1,7 @@
 use std::io::{stdout, Stdout, Write};
-use crate::{BoxConfig, LineStyle};
 use crate::colors::ColoredText;
 use crate::errors::Error;
+use crate::widgets::{BoxConfig, LineStyle};
 
 pub struct Interface {
     cursor_pos: [i32; 2],
