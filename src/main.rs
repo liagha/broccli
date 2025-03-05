@@ -1,23 +1,14 @@
-mod errors;
-mod colors;
-mod macros;
-mod interface;
-mod terminal;
-mod widgets;
-
-use crate::errors::Error;
-use crate::colors::Color;
-use crate::interface::Interface;
-use std::io::Write;
-use crate::terminal::get_terminal_size;
-use crate::widgets::{BoxConfig, LineStyle};
+use broccli::colors::Color;
+use broccli::errors::Error;
+use broccli::interface::Interface;
+use broccli::terminal::get_terminal_size;
+use broccli::widgets::{BoxConfig, LineStyle};
+use broccli::xprintln;
 
 fn main() -> Result<(), Error> {
     let mut interface = Interface::new();
 
     interface.clear()?;
-
-    xprintln!("{} hey" => Color::Red, "hey");
 
     if let Ok((cols, rows)) = get_terminal_size() {
         let config = BoxConfig {
