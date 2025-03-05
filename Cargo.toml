@@ -1,7 +1,12 @@
 [package]
 name = "clione"
-version = "0.1.0"
-edition = "2024"
+version = "0.0.0"
+edition = "2021"
+authors = ["Ali Aghaahmadi <itsaliaghaahmadi@gmail.com>"]
+description = "A library for working with command-line interfaces"
+license = "MIT OR Apache-2.0"
+keywords = ["cli", "tui", "rust"]
+categories = ["development-tools", "command-line-interface"]
 
 [dependencies]
 libc = "0.2.169"
