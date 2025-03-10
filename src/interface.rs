@@ -1,5 +1,5 @@
 use std::io::{stdout, Stdout, Write};
-use crate::colors::ColoredText;
+use broccolor::TextStyle;
 use crate::errors::Error;
 use crate::widgets::{BoxConfig, LineStyle};
 

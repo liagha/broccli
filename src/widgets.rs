@@ -1,4 +1,4 @@
-use crate::colors::Color;
+use broccolor::Color;
 
 #[derive(Debug, Clone, Copy)]
 pub struct BoxConfig {

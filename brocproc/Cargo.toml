@@ -1,0 +1,16 @@
+[package]
+name = "brocproc"
+version = "0.0.1"
+edition = "2024"
+
+[dependencies]
+syn = { version = "2.0.96", features = ["parsing", "full"] }
+quote = { version = "1.0" }
+proc-macro2 = { version = "1.0.93" }
+broccolor = { version = "0.0.1", path = "../broccolor" }
+
+[dev-dependencies]
+syn = { version = "2", features = ["full"] }
+
+[lib]
+proc-macro = true
