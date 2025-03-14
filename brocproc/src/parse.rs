@@ -1,6 +1,6 @@
 use syn::{Expr, Token};
 use syn::parse::{Parse, ParseStream};
-use syn::token::FatArrow;
+use syn::token::{At, DotDotEq, FatArrow};
 
 #[derive(Clone)]
 pub enum MacroArg {
@@ -20,7 +20,18 @@ impl Parse for MacroArg {
             input.parse::<FatArrow>()?;
             let value = input.parse::<Expr>()?;
             Ok(MacroArg::KeyValue(expr, value))
-        } else {
+        }
+        else if input.peek(At) {
+            input.parse::<At>()?;
+            let value = input.parse::<Expr>()?;
+            Ok(MacroArg::KeyValue(expr, value))
+        }
+        else if input.peek(DotDotEq) {
+            input.parse::<DotDotEq>()?;
+            let value = input.parse::<Expr>()?;
+            Ok(MacroArg::KeyValue(expr, value))
+        }
+        else {
             Ok(MacroArg::Simple(expr))
         }
     }

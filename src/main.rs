@@ -1,29 +1,32 @@
-use brocproc::{tokenize, xformat_args};
+use brocproc::{tree};
 use broccli::errors::Error;
-use broccli::interface::Interface;
-use broccli::xprintln;
-use broccolor::Color;
 
 fn main() -> Result<(), Error> {
-    let interface = Interface::new();
-
-    let test = tokenize!(
-        "test" => Color::Crimson,
-        "test",
-        "test2" => Color::White,
+    tree!(
+        "Hello, World!",
         {
+            "Hello, World 2!";
+            "Last One Here";
+        },
+        {
+            "Hello, World 3!";
             {
-                "ali"
+                "Nested Block 1"
+            }
+            {
+                "Nested Block 2"
             }
         },
-        "test",
+        "Goodbye, World!"
     );
 
 
-    let vec = vec!["test"];
-    let test = xprintln!("test {:?} {}" => Color::Crimson, vec => Color::Blue, "test2" => Color::White);
+    //let test = xprintln!("test {:?} {}" => Color::Crimson, vec => Color::Blue, "test2" => Color::White);
 
-/*    interface.clear()?;
+/*
+    let interface = Interface::new();
+
+    interface.clear()?;
 
     if let Ok((cols, rows)) = get_terminal_size() {
         let config = BoxConfig {
