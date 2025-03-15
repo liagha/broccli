@@ -1,29 +1,29 @@
-use brocproc::{tree};
+use brocproc::test_proc;
 use broccli::errors::Error;
+use broccolor::Color;
 
 fn main() -> Result<(), Error> {
-    tree!(
-        "Hello, World!",
+
+/*    println!("{}", test_proc!(
+        "test" => Color::Red,
+        ("Hello {0} {1}" => Color::Magenta, "Fucking", "World" => Color::Blue),
         {
-            "Hello, World 2!";
-            "Last One Here";
-        },
-        {
-            "Hello, World 3!";
+            "test" => Color::Green,
             {
-                "Nested Block 1"
-            }
-            {
-                "Nested Block 2"
+                {
+                    {
+                        {
+                            "Innnnnn" => Color::Magenta,
+                        },
+                        ("Test {1} {0}", "Heyyy", "Fuck")
+                    }
+                }
             }
         },
-        "Goodbye, World!"
-    );
-
-
-    //let test = xprintln!("test {:?} {}" => Color::Crimson, vec => Color::Blue, "test2" => Color::White);
-
-/*
+        "test",
+    ));
+*/
+    /*
     let interface = Interface::new();
 
     interface.clear()?;

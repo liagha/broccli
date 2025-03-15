@@ -21,28 +21,26 @@ extern "C" {
 
 #[cfg(feature = "xprint")]
 #[macro_export]
-macro_rules! xprint {
-    ($($args:tt)*) => {{
-        let text = brocproc::xformat_args!($($args)*);
-
-        print!("{}", text);
-
-        #[cfg(target_arch = "wasm32")]
-        $crate::macros::log(text);
-    }};
+macro_rules! xprintln {
+    ($($args:tt)*) => {
+        println!("{}", xformat_args!($($args)*));
+    };
 }
 
 #[cfg(feature = "xprint")]
 #[macro_export]
-macro_rules! xprintln {
-    ($($args:tt)*) => {{
-        let text = brocproc::xformat_args!($($args)*);
+macro_rules! xprint {
+    ($($args:tt)*) => {
+        print!("{}", xformat_args!($($args)*));
+    };
+}
 
-        println!("{}", text);
-
-        #[cfg(target_arch = "wasm32")]
-        $crate::macros::log(&text);
-    }};
+#[cfg(feature = "xprint")]
+#[macro_export]
+macro_rules! xprintb {
+    ($($args:tt)*) => {
+        println!("{}", xformat_block!($($args)*, 0));
+    };
 }
 
 #[cfg(feature = "xprint")]

@@ -26,7 +26,7 @@ impl<T: Display + Debug> TextStyle for T {
     }
 
     fn term_colorize(&self, color: Color) -> String {
-        if cfg!(target_arch = "wasm32") {
+        if !cfg!(target_arch = "wasm32") {
             if color_support() {
                 return format!("{}{}{}", color.to_ansi_code(), self, Color::reset())
             }
@@ -35,15 +35,6 @@ impl<T: Display + Debug> TextStyle for T {
         self.to_string()
     }
 
-    fn to_colored<U: Display + Debug>(self, color: Color) -> ColoredText<U>
-    where
-        Self: Into<U>,
-    {
-        ColoredText {
-            content: self.into(),
-            color,
-        }
-    }
     fn background(&self, color: Color) -> String {
         format!("{}{}{}", color.to_background_ansi_code(), self, Color::reset())
     }
@@ -69,10 +60,6 @@ impl<T: Display + Debug> TextStyle for T {
 pub trait TextStyle {
     fn colorize(&self, color: Color) -> String;
     fn term_colorize(&self, color: Color) -> String;
-    fn to_colored<T: Display + Debug>(self, color: Color) -> ColoredText<T>
-    where
-        Self: Sized + Into<T>;
-
     fn background(&self, color: Color) -> String;
     fn bold(&self) -> String;
     fn italic(&self) -> String;

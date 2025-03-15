@@ -1,191 +1,138 @@
-#![allow(dead_code)]
-
 mod parse;
-use parse::{MacroArg, MacroArgs};
-use proc_macro::TokenStream;
-use quote::{quote};
-use syn::{Expr, ExprBlock, parse_macro_input, Token, Stmt};
+use crate::parse::{MacroArg, MacroArgs};
+use quote::quote;
+use syn::parse_macro_input;
 
 #[proc_macro]
-pub fn xformat_args(input: TokenStream) -> TokenStream {
-    let MacroArgs { mut args } = parse_macro_input!(input as MacroArgs);
+pub fn test_proc(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    let MacroArgs { args } = parse_macro_input!(input as MacroArgs);
 
-    if args.is_empty() {
-        return quote! {
-            println!("")
-        }
-        .into();
-    }
+    let out = xformat_block(&args, 0);
 
-    let (format, format_color) = match args.remove(0) {
-        MacroArg::Simple(arg) => {
-            let color: Expr = syn::parse_quote! { Color::White };
+    out
+}
 
-            (arg, color)
-        }
-        MacroArg::KeyValue(arg, color) => (arg, color),
-    };
-
-    let mut arg_expressions = Vec::new();
-
-    for arg in args {
-        match arg {
-            MacroArg::Simple(expr) => {
-                arg_expressions.push(quote! { #expr });
+fn xformat_args(args: &Vec<MacroArg>) -> proc_macro::TokenStream {
+    fn xformat_arg(arg: &MacroArg) -> proc_macro::TokenStream {
+        match &arg {
+            MacroArg::Simple(expr) => quote! {
+                format!("{}", #expr)
             }
-            MacroArg::KeyValue(expr, color) => {
-                let expression = quote! {
+            .into(),
+            MacroArg::KeyValue(expr, color) => quote! {
+                format!(
+                    "{}",
                     broccolor::ColoredText {
                         content: #expr,
-                        color: #color
+                        color: #color,
                     }
-                };
-
-                arg_expressions.push(expression);
+                )
+            }
+            .into(),
+            MacroArg::Group(inner_args) => {
+                let inner_tokens: proc_macro2::TokenStream = xformat_args(inner_args).into();
+                quote! { #inner_tokens }.into()
+            }
+            MacroArg::Block(block_args) => {
+                let inner_tokens: proc_macro2::TokenStream = xformat_block(block_args, 1).into();
+                quote! { #inner_tokens }.into()
             }
         }
     }
-
-    let result = quote! {
-        broccolor::TextStyle::colorize(
-            &format!(#format, #(#arg_expressions),*),
-            #format_color
-        )
-    };
-
-    result.into()
-}
-
-fn xformat_args_fn(input: TokenStream) -> TokenStream {
-    println!("{}", input);
-
-    let MacroArgs { mut args } = parse_macro_input!(input as MacroArgs);
 
     if args.is_empty() {
-        return quote! {
-            println!("")
-        }
-        .into();
+        return quote! { "" }.into();
     }
 
-    let (format, format_color) = match args.remove(0) {
-        MacroArg::Simple(arg) => {
-            let color: Expr = syn::parse_quote! { broccolor::Color::Transparent };
+    if args.len() == 1 {
+        return xformat_arg(&args[0]);
+    }
 
-            (arg, color)
+    let mut iter = args.iter();
+    let (format_string, format_color) = match iter.next().unwrap() {
+        MacroArg::Simple(expr) => (quote! { #expr }, quote! { broccolor::Color::Transparent }),
+        MacroArg::KeyValue(expr, color) => (quote! { #expr }, quote! { #color }),
+        MacroArg::Group(inner_args) => {
+            let inner_tokens: proc_macro2::TokenStream = xformat_args(inner_args).into();
+            (
+                quote! { #inner_tokens },
+                quote! { broccolor::Color::Transparent },
+            )
         }
-        MacroArg::KeyValue(arg, color) => (arg, color),
+        MacroArg::Block(block_args) => {
+            let inner_tokens: proc_macro2::TokenStream = xformat_block(block_args, 1).into();
+            (
+                quote! { #inner_tokens },
+                quote! { broccolor::Color::Transparent },
+            )
+        }
     };
 
-    let mut arg_expressions = Vec::new();
+    let format_args = iter
+        .map(|arg| xformat_arg(arg).into())
+        .collect::<Vec<proc_macro2::TokenStream>>();
 
-    for arg in args {
-        match arg {
-            MacroArg::Simple(expr) => {
-                arg_expressions.push(quote! { #expr });
-            }
-            MacroArg::KeyValue(expr, color) => {
-                let expression = quote! {
-                    broccolor::ColoredText {
-                        content: #expr,
-                        color: #color
-                    }
-                };
-
-                arg_expressions.push(expression);
-            }
-        }
-    }
-
-    let result = quote! {
-        broccolor::TextStyle::colorize(
-            &format!(#format, #(#arg_expressions),*),
-            #format_color
+    quote! {
+        format!(
+            "{}",
+            broccolor::TextStyle::term_colorize(&format!(#format_string, #(#format_args),*), #format_color)
         )
-    };
-
-    result.into()
+    }.into()
 }
 
-use syn::punctuated::Punctuated;
+fn xformat_block(block: &Vec<MacroArg>, depth: u16) -> proc_macro::TokenStream {
+    let depth_lit = depth as usize;
+    let mut format_string = String::new();
 
-#[proc_macro]
-pub fn tree(input: TokenStream) -> TokenStream {
-    let parser = Punctuated::<Expr, Token![,]>::parse_terminated;
-    let exprs = parse_macro_input!(input with parser);
-    process_exprs(&exprs, Vec::new()).into()
-}
-
-fn process_exprs(exprs: &Punctuated<Expr, Token![,]>, prefix_stack: Vec<bool>) -> proc_macro2::TokenStream {
-    let mut tokens = proc_macro2::TokenStream::new();
-
-    for (i, expr) in exprs.iter().enumerate() {
-        let last = i == exprs.len() - 1;
-
-        let mut prefix = generate_prefix(&prefix_stack);
-        prefix.push_str(if last { "└──" } else { "├──" });
-
-        match expr {
-            Expr::Block(ExprBlock { block, .. }) => {
-                tokens.extend(quote! { println!("{}─┐", #prefix); });
-
-                let mut new_prefix_stack = prefix_stack.clone();
-                new_prefix_stack.push(!last);
-
-                for (j, stmt) in block.stmts.iter().enumerate() {
-                    let stmt_last = j == block.stmts.len() - 1;
-                    tokens.extend(process_stmt(stmt, new_prefix_stack.clone(), stmt_last));
-                }
-            }
-            _ => tokens.extend(quote! { println!("{} {}", #prefix, stringify!(#expr)); }),
-        }
-    }
-
-    tokens
-}
-
-fn process_stmt(stmt: &Stmt, prefix_stack: Vec<bool>, is_last: bool) -> proc_macro2::TokenStream {
-    let mut tokens = proc_macro2::TokenStream::new();
-
-    let mut prefix = generate_prefix(&prefix_stack);
-    prefix.push_str(if is_last { "└──" } else { "├──" });
-
-    match stmt {
-        Stmt::Expr(nested_expr, _) => {
-            if let Expr::Block(ExprBlock { block, .. }) = nested_expr {
-                tokens.extend(quote! { println!("{}─┐", #prefix); });
-
-                let mut new_prefix_stack = prefix_stack.clone();
-                new_prefix_stack.push(!is_last);
-
-                for (j, stmt) in block.stmts.iter().enumerate() {
-                    let stmt_last = j == block.stmts.len() - 1;
-                    tokens.extend(process_stmt(stmt, new_prefix_stack.clone(), stmt_last));
-                }
+    let output = block
+        .iter()
+        .enumerate()
+        .map(|(i, arg)| {
+            if i != block.len() - 1 {
+                format_string.push_str("{}\n");
             } else {
-                let formatted_nested_expr : proc_macro2::TokenStream = xformat_args_fn(quote! { #nested_expr }.into()).into();
-                tokens.extend(quote! {
-                    let text = #formatted_nested_expr;
-                    println!("{} {}", #prefix, text);
-                });
+                format_string.push_str("{}");
             }
-        }
-        _ => {
-            let formatted_stmt : proc_macro2::TokenStream = xformat_args_fn(quote! { #stmt }.into()).into();
-            tokens.extend(quote! {
-                let text = #formatted_stmt;
-                println!("{} {}", #prefix, text)
-            });
-        },
-    }
 
-    tokens
-}
+            match arg {
+                MacroArg::Simple(expr) => {
+                    quote! {
+                        format!("{}{}", "---".repeat(#depth_lit), #expr)
+                    }
+                }
+                MacroArg::KeyValue(expr, color) => {
+                    quote! {
+                        format!(
+                            "{}{}",
+                            broccolor::TextStyle::term_colorize(&"---".repeat(#depth_lit), #color),
+                            broccolor::ColoredText {
+                                content: #expr,
+                                color: #color,
+                            }
+                        )
+                    }
+                }
+                MacroArg::Group(args) => {
+                    let inner_args: proc_macro2::TokenStream = xformat_args(args).into();
 
-fn generate_prefix(prefix_stack: &[bool]) -> String {
-    let mut prefix = String::new();
-    for &has_pipe in prefix_stack {
-        prefix.push_str(if has_pipe { "│   " } else { "    " });
+                    quote! {
+                        #inner_args
+                    }
+                }
+                MacroArg::Block(block_args) => {
+                    let inner_block = xformat_block(block_args, depth + 1);
+                    let inner_block: proc_macro2::TokenStream = inner_block.into();
+
+                    quote! {
+                        #inner_block
+                    }
+                }
+            }
+        })
+        .collect::<Vec<_>>();
+
+    quote! {
+        format!(#format_string, #(#output),*)
     }
-    prefix
+    .into()
 }
