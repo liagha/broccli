@@ -1,6 +1,6 @@
 [package]
 name = "broccli"
-version = "0.0.19"
+version = "0.0.20"
 edition = "2021"
 authors = ["Ali Aghaahmadi <itsaliaghaahmadi@gmail.com>"]
 description = "A library for working with command-line interfaces"
