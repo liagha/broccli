@@ -17,5 +17,5 @@ xprint = []
 [dependencies]
 libc = "0.2.169"
 broccolor = { version = "0.0.3", path = "broccolor" }
-brocproc = { version = "0.0.5", path = "brocproc" }
+brocproc = { version = "0.0.6", path = "brocproc" }
 wasm-bindgen = { version = "0.2.100", optional = true }
