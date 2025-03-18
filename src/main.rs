@@ -1,10 +1,10 @@
-use brocproc::test_proc;
+use brocproc::{xprintb, xprintln};
 use broccli::errors::Error;
 use broccolor::Color;
 
 fn main() -> Result<(), Error> {
 
-    println!("{}", test_proc!(
+    xprintb!(
         "test" => Color::Red,
         ("Hello {0} {1}" => Color::Magenta, "Fucking", "World" => Color::Blue),
         {
@@ -21,7 +21,7 @@ fn main() -> Result<(), Error> {
             }
         },
         "test",
-    ));
+    );
 
     /*
     let interface = Interface::new();
