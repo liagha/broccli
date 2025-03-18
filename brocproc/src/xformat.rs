@@ -10,7 +10,7 @@ pub fn xformat_args(args: &Vec<MacroArg>) -> proc_macro::TokenStream {
             MacroArg::KeyValue(expr, color) => quote! {
                 format!(
                     "{}",
-                    $crate::ColoredText {
+                    broccli::ColoredText {
                         content: #expr,
                         color: #color,
                     }
@@ -37,20 +37,20 @@ pub fn xformat_args(args: &Vec<MacroArg>) -> proc_macro::TokenStream {
 
     let mut iter = args.iter();
     let (format_string, format_color) = match iter.next().unwrap() {
-        MacroArg::Simple(expr) => (quote! { #expr }, quote! { $crate::Color::Transparent }),
+        MacroArg::Simple(expr) => (quote! { #expr }, quote! { broccli::Color::Transparent }),
         MacroArg::KeyValue(expr, color) => (quote! { #expr }, quote! { #color }),
         MacroArg::Group(inner_args) => {
             let inner_tokens: proc_macro2::TokenStream = xformat_args(inner_args).into();
             (
                 quote! { #inner_tokens },
-                quote! { $crate::Color::Transparent },
+                quote! { broccli::Color::Transparent },
             )
         }
         MacroArg::Block(block_args) => {
             let inner_tokens: proc_macro2::TokenStream = xformat_block(block_args, 1).into();
             (
                 quote! { #inner_tokens },
-                quote! { $crate::Color::Transparent },
+                quote! { broccli::Color::Transparent },
             )
         }
     };
@@ -62,7 +62,7 @@ pub fn xformat_args(args: &Vec<MacroArg>) -> proc_macro::TokenStream {
     quote! {
         format!(
             "{}",
-            $crate::TextStyle::term_colorize(&format!(#format_string, #(#format_args),*), #format_color)
+            broccli::TextStyle::term_colorize(&format!(#format_string, #(#format_args),*), #format_color)
         )
     }.into()
 }
@@ -135,8 +135,8 @@ pub fn xformat_block(block: &Vec<MacroArg>, depth: u16) -> proc_macro::TokenStre
                     quote! {
                         format!(
                             "{}{}",
-                            $crate::TextStyle::term_colorize(&#prefix, #color),
-                            $crate::ColoredText {
+                            broccli::TextStyle::term_colorize(&#prefix, #color),
+                            broccli::ColoredText {
                                 content: #expr,
                                 color: #color,
                             }

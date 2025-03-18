@@ -1,13 +1,13 @@
 [package]
 name = "brocproc"
-version = "0.0.6"
+version = "0.0.7"
 edition = "2024"
 license = "MIT"
 readme = "README.md"
 description = "Procedural macros for BrocCLI"
 
 [dependencies]
-syn = { version = "2.0.96", features = ["full"] }
+syn = { version = "2", features = ["full"] }
 quote = { version = "1.0" }
 proc-macro2 = { version = "1.0.93" }
 broccolor = { version = "0.0.3", path = "../broccolor" }
