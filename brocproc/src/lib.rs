@@ -3,6 +3,7 @@ mod xformat;
 use quote::quote;
 use syn::parse_macro_input;
 use xformat::*;
+use broccolor::{Color, TextStyle};
 use crate::parse::MacroArgs;
 
 #[proc_macro]
@@ -29,13 +30,12 @@ pub fn xprint(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 pub fn xeprintln(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let MacroArgs { args } = parse_macro_input!(input as MacroArgs);
     let out : proc_macro2::TokenStream = xformat_args(&args).into();
+    let error_str = "error:".term_colorize(Color::Red).bold();
 
 
-    quote! {{
-        use broccolor::TextStyle;
-
-        println!("{} {}", "error:".term_colorize(Color::Red), #out)
-    }}.into()
+    quote! {
+        println!("{} {}", #error_str, #out)
+    }.into()
 }
 
 #[proc_macro]
