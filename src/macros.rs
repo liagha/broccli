@@ -22,32 +22,32 @@ extern "C" {
 #[cfg(feature = "xprint")]
 #[macro_export]
 macro_rules! xprintln {
-    ($($args:tt)*) => {
-        println!("{}", xformat_args!($($args)*));
-    };
+    ($($args:tt)*) => {{
+        println!("{}", brocproc::xformat_args!($($args)*));
+    }};
 }
 
 #[cfg(feature = "xprint")]
 #[macro_export]
 macro_rules! xprint {
-    ($($args:tt)*) => {
-        print!("{}", xformat_args!($($args)*));
-    };
+    ($($args:tt)*) => {{
+        print!("{}", brocproc::xformat_args!($($args)*));
+    }};
 }
 
 #[cfg(feature = "xprint")]
 #[macro_export]
 macro_rules! xprintb {
-    ($($args:tt)*) => {
-        println!("{}", xformat_block!($($args)*, 0));
-    };
+    ($($args:tt)*) => {{
+        println!("{}", brocproc::xformat_block!($($args)*, 0));
+    }};
 }
 
 #[cfg(feature = "xprint")]
 #[macro_export]
 macro_rules! xeprint {
     ($($args:tt)*) => {{
-        let text = $crate::xformat_args!($($args)*);
+        let text = brocproc::xformat_args!($($args)*);
 
         use broccli::colors::ColoredText;
 
@@ -62,7 +62,7 @@ macro_rules! xeprint {
 #[macro_export]
 macro_rules! xeprintln {
     ($($args:tt)*) => {{
-        let text = $crate::xformat_args!($($args)*);
+        let text = brocproc::xformat_args!($($args)*);
 
         use broccli::colors::ColoredText;
 
@@ -77,7 +77,7 @@ macro_rules! xeprintln {
 #[macro_export]
 macro_rules! xdprintln {
     ($($args:tt)*) => {{
-        let text = $crate::xformat_args!($($args)*);
+        let text = brocproc::xformat_args!($($args)*);
 
         use broccli::colors::ColoredText;
 
