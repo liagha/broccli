@@ -4,7 +4,7 @@ use broccolor::Color;
 
 fn main() -> Result<(), Error> {
 
-/*    println!("{}", test_proc!(
+    println!("{}", test_proc!(
         "test" => Color::Red,
         ("Hello {0} {1}" => Color::Magenta, "Fucking", "World" => Color::Blue),
         {
@@ -22,7 +22,7 @@ fn main() -> Result<(), Error> {
         },
         "test",
     ));
-*/
+
     /*
     let interface = Interface::new();
 

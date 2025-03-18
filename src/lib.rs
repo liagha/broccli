@@ -7,3 +7,7 @@ pub use brocproc;
 pub use broccolor;
 pub use broccolor::{Color, ColoredText, TextStyle};
 pub use macros::*;
+pub use interface::*;
+pub use terminal::*;
+pub use widgets::*;
+pub use brocproc::*;
