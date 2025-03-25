@@ -1,7 +1,7 @@
 [package]
 name = "broccolor"
-version = "0.0.3"
-edition = "2024"
+version = "0.0.4"
+edition = "2021"
 license = "MIT"
 readme = "README.md"
 description = "A coloring library mostly used for BrocCLI"
