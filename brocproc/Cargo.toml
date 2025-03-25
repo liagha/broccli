@@ -10,7 +10,7 @@ description = "Procedural macros for BrocCLI"
 syn = { version = "2", features = ["full"] }
 quote = { version = "1.0" }
 proc-macro2 = { version = "1.0.93" }
-broccolor = { version = "0.0.3", path = "../broccolor" }
+broccolor = { version = "0.0.4", path = "../broccolor" }
 
 [dev-dependencies]
 syn = { version = "2", features = ["full"] }
