@@ -1,23 +1,15 @@
-use broccolor::Color;
 use crate::buffer::{Buffer, Cell};
+use crate::layout::Rect;
+use crate::style::Style;
 
 pub trait Widget {
     fn render(self, area: Rect, buf: &mut Buffer);
 }
 
 #[derive(Debug, Clone, Copy)]
-pub struct Rect {
-    pub x: u16,
-    pub y: u16,
-    pub width: u16,
-    pub height: u16,
-}
-
-#[derive(Debug, Clone, Copy)]
 pub struct Block {
     pub line: Line,
-    pub fg: Color,
-    pub bg: Color,
+    pub style: Style,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -52,8 +44,7 @@ impl Widget for Block {
 
         let cell = |symbol: char| Cell {
             symbol,
-            fg: self.fg,
-            bg: self.bg,
+            style: self.style,
         };
 
         buf.set(area.x, area.y, cell(border.0));

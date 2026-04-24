@@ -1,4 +1,5 @@
 use crate::buffer::Buffer;
+use crate::style::Modifier;
 use broccolor::{Color, ColorConversion};
 use crossterm::{cursor, terminal, ExecutableCommand, QueueableCommand};
 use std::io::{stdout, Stdout, Write};
@@ -53,11 +54,18 @@ impl Terminal {
                 if curr != prev {
                     self.out.queue(cursor::MoveTo(x, y))?;
 
-                    let fg = curr.fg.to_ansi_code();
-                    let bg = curr.bg.to_background_ansi_code();
+                    let fg = curr.style.fg.unwrap_or(Color::White).to_ansi_code();
+                    let bg = curr.style.bg.unwrap_or(Color::Transparent).to_background_ansi_code();
+
+                    let mut mods = String::new();
+                    if curr.style.modifier.contains(Modifier::BOLD) { mods.push_str(Color::bold()); }
+                    if curr.style.modifier.contains(Modifier::ITALIC) { mods.push_str(Color::italic()); }
+                    if curr.style.modifier.contains(Modifier::UNDERLINE) { mods.push_str(Color::underline()); }
+                    if curr.style.modifier.contains(Modifier::STRIKE) { mods.push_str(Color::strikethrough()); }
+
                     let reset = Color::reset();
 
-                    write!(self.out, "{}{}{}{}", fg, bg, curr.symbol, reset)?;
+                    write!(self.out, "{}{}{}{}{}", mods, fg, bg, curr.symbol, reset)?;
                 }
             }
         }

@@ -1,18 +1,16 @@
-use broccolor::Color;
+use crate::style::Style;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Cell {
     pub symbol: char,
-    pub fg: Color,
-    pub bg: Color,
+    pub style: Style,
 }
 
 impl Default for Cell {
     fn default() -> Self {
         Self {
             symbol: ' ',
-            fg: Color::White,
-            bg: Color::Transparent,
+            style: Style::default(),
         }
     }
 }
