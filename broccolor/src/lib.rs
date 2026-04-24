@@ -1,6 +1,7 @@
+pub mod colorizing;
 pub mod colors;
-mod conversion;
-mod colorizing;
+pub mod conversion;
 
-pub use colors::Color;
 pub use colorizing::{ColoredText, TextStyle};
+pub use colors::Color;
+pub use conversion::ColorConversion;
